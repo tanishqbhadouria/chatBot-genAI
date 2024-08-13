@@ -1,95 +1,171 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client'
+
+import { Box, Button, Stack, TextField, Typography } from '@mui/material'
+import {useState, useEffect, useRef} from 'react';
+import{ marked} from 'marked'
 
 export default function Home() {
+
+
+  const [messages, setMessages]=useState([
+  ])
+  const [message, setMessage] = useState('')
+  
+  
+  const sendMessage = async () => {
+   // Clear the input field
+  
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+   const raw = JSON.stringify([
+     {
+       "role": "user",
+       "parts": [
+          {
+           "text": message
+        }
+      ]
+    }
+  ]);
+  
+    setMessages((messages) => [
+      ...messages,
+      { role: 'user',  parts: [{ text   : message }] },  // Add the user's message to the chat
+      { role: 'model',parts: [  { text  :' ' }] },  // Add a placeholder for the assistant's response
+    ])
+    setMessage('') 
+
+const requestOptions = {
+  method: "POST",
+  headers: myHeaders,
+  body: raw,
+  redirect: "follow"
+};
+
+fetch("http://localhost:3000/api/chat", requestOptions)
+  .then(async (response) =>{
+    const ans = await response.text();  // Get the response text
+    console.log(ans)
+    setMessages((prevMessages) => {
+          let lastMessage = prevMessages[prevMessages.length - 1];  // Get the last message (assistant's placeholder)
+          let otherMessages = prevMessages.slice(0, -1);  // Get all other messages
+      
+          // Append the decoded text to the assistant's message
+          return  [
+            ...otherMessages,
+            { ...lastMessage, parts: [{ text: marked(ans) }] },
+          ]
+        });
+  })
+ 
+  .catch((error) => console.error(error));
+    // const response = fetch("http://localhost:3000/api/chat", {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify([...messages, { role: 'user', parts: [{ text: message }] }]),
+    // }).then(async (res) => {
+    //   const ans = res.text();  // Get the response text
+    //   console.log(ans)
+    //   setMessages((prevMessages) => {
+    //     let lastMessage = prevMessages[prevMessages.length - 1];  // Get the last message (assistant's placeholder)
+    //     let otherMessages = prevMessages.slice(0, -1);  // Get all other messages
+    
+    //     // Append the decoded text to the assistant's message
+    //     return [
+    //       ...otherMessages,
+    //       { ...lastMessage, parts: [{ text: ans }] },
+    //     ];
+    //   });
+    // });
+  }
+
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault()
+      sendMessage()
+    }
+  }
+
+  const messagesEndRef = useRef(null)
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+useEffect(() => {
+  scrollToBottom()
+}, [messages])
+
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.js</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
+   <Box
+    width='100vw'
+    height='100vh'
+    display='flex'
+    flexDirection='column'
+    justifyContent='center'
+    alignItems='center'
+    sx={{backgroundColor: '#F5F5DC'}}
+   >
+    <Typography variant='h1'
+     sx={{fontFamily:'new roman', fontWeight:'normal'}}
+    > Medical Blog's Chatbot </Typography>
+    <Stack
+        direction={'column'}
+        width="1000px"
+        height="700px"
+        border="1px solid black"
+        borderRadius="3%"
+        p={2}
+        spacing={3}
+        sx={{backgroundColor: '#D1E9F6'}}
+      >
+         <Stack
+          direction={'column'}
+          spacing={2}
+          flexGrow={1}
+          overflow="auto"
+          maxHeight="100%"
         >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+            {messages.map((mes, index) => (
+            <Box
+              key={index}
+              display="flex"
+              justifyContent={
+                mes.role === 'model' ? 'flex-start' : 'flex-end'
+              }
+            >
+              <Box
+                bgcolor={
+                  mes.role === 'model'
+                    ? 'primary.main'
+                    : 'secondary.main'
+                }
+                color="white"
+                borderRadius={16}
+                p={3}
+                dangerouslySetInnerHTML={{ __html: mes.parts[0].text }}
+              >
+              </Box>
+            </Box>
+          ))}
+        </Stack>
+        
+        <Stack direction={'row'} spacing={2}>
+          <TextField
+            label="message"
+            fullWidth
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={handleKeyPress}
+          />
+          <Button variant="contained" onClick={sendMessage}>
+            Send
+          </Button>
+          </Stack>
+      </Stack>  
+   </Box>
   );
 }
