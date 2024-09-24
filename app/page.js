@@ -96,7 +96,7 @@ export default function Home() {
           fontSize: '24px',
         }
       }}>
-        Medical Blog's Chatbot
+        {"Medical Blog's Chatbot"}
       </Typography>
       
       <Stack
