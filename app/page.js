@@ -73,27 +73,49 @@ export default function Home() {
 
   return (
     <Box
-      width='100vw'
-      height='100vh'
-      display='flex'
-      flexDirection='column'
-      justifyContent='center'
-      alignItems='center'
-      sx={{ backgroundColor: '#F5F5DC' }}
+      width="100vw"
+      height="100vh"
+      display="flex"
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+      sx={{
+        backgroundColor: '#f0f4f8',
+        '@media (max-width: 768px)': {
+          height: 'auto',
+          padding: '20px',
+        },
+      }}
     >
-      <Typography variant='h1' sx={{ fontFamily: '"Times New Roman", serif', fontWeight: 'normal' }}>
-        Medical Blog&#39;s Chatbot
+      <Typography variant='h2' sx={{
+        fontFamily: '"Poppins", sans-serif', 
+        fontWeight: 'bold',
+        marginBottom: '20px',
+        color: '#333',
+        '@media (max-width: 768px)': {
+          fontSize: '24px',
+        }
+      }}>
+        Medical Blog's Chatbot
       </Typography>
       
       <Stack
         direction={'column'}
         width="1000px"
         height="700px"
-        border="1px solid black"
-        borderRadius="3%"
-        p={2}
+        border="2px solid #333"
+        borderRadius="12px"
+        p={4}  // Increased padding for the container
         spacing={3}
-        sx={{ backgroundColor: '#D1E9F6' }}
+        sx={{
+          backgroundColor: '#ffffff',
+          boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+          overflow: 'hidden',
+          '@media (max-width: 768px)': {
+            width: '100%',
+            height: '500px',
+          }
+        }}
       >
         <Stack
           direction={'column'}
@@ -101,33 +123,73 @@ export default function Home() {
           flexGrow={1}
           overflow="auto"
           maxHeight="100%"
+          sx={{
+            paddingRight: '10px',
+            '&::-webkit-scrollbar': {
+              width: '5px',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              backgroundColor: '#888',
+              borderRadius: '10px',
+            },
+          }}
         >
           {messages.map((mes, index) => (
             <Box
               key={index}
               display="flex"
               justifyContent={mes.role === 'model' ? 'flex-start' : 'flex-end'}
+              sx={{
+                padding: '15px',  // Increased padding for each message
+                '@media (max-width: 768px)': {
+                  fontSize: '12px',
+                }
+              }}
             >
               <Box
-                bgcolor={mes.role === 'model' ? 'primary.main' : 'secondary.main'}
+                bgcolor={mes.role === 'model' ? '#4a90e2' : '#50e3c2'}
                 color="white"
                 borderRadius={16}
-                p={3}
+                p={3}  // Increased padding inside each message
+                sx={{
+                  maxWidth: '70%',
+                  wordWrap: 'break-word',
+                  '@media (max-width: 768px)': {
+                    maxWidth: '90%',
+                  },
+                }}
                 dangerouslySetInnerHTML={{ __html: mes.parts[0].text }}
               ></Box>
             </Box>
           ))}
+          <div ref={messagesEndRef} />
         </Stack>
 
-        <Stack direction={'row'} spacing={2}>
+        <Stack direction={'row'} spacing={2} sx={{ alignItems: 'center' }}>
           <TextField
-            label="message"
+            label="Type your message"
+            variant="outlined"
             fullWidth
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={handleKeyPress}
+            sx={{
+              '@media (max-width: 768px)': {
+                fontSize: '14px',
+              }
+            }}
           />
-          <Button variant="contained" onClick={sendMessage}>
+          <Button 
+            variant="contained" 
+            onClick={sendMessage}
+            sx={{
+              backgroundColor: '#4a90e2',
+              '&:hover': { backgroundColor: '#357ABD' },
+              '@media (max-width: 768px)': {
+                fontSize: '12px',
+              }
+            }}
+          >
             Send
           </Button>
         </Stack>
