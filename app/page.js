@@ -13,7 +13,7 @@ export default function Home() {
   
   
   const sendMessage = async () => {
-   // Clear the input field
+   
   
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -34,7 +34,7 @@ export default function Home() {
       { role: 'user',  parts: [{ text   : message }] },  // Add the user's message to the chat
       { role: 'model',parts: [  { text  :' ' }] },  // Add a placeholder for the assistant's response
     ])
-    setMessage('') 
+    setMessage('') // Clear the input field
 
 const requestOptions = {
   method: "POST",
@@ -60,26 +60,7 @@ fetch("http://localhost:3000/api/chat", requestOptions)
   })
  
   .catch((error) => console.error(error));
-    // const response = fetch("http://localhost:3000/api/chat", {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify([...messages, { role: 'user', parts: [{ text: message }] }]),
-    // }).then(async (res) => {
-    //   const ans = res.text();  // Get the response text
-    //   console.log(ans)
-    //   setMessages((prevMessages) => {
-    //     let lastMessage = prevMessages[prevMessages.length - 1];  // Get the last message (assistant's placeholder)
-    //     let otherMessages = prevMessages.slice(0, -1);  // Get all other messages
     
-    //     // Append the decoded text to the assistant's message
-    //     return [
-    //       ...otherMessages,
-    //       { ...lastMessage, parts: [{ text: ans }] },
-    //     ];
-    //   });
-    // });
   }
 
   const handleKeyPress = (event) => {
