@@ -43,7 +43,7 @@ const requestOptions = {
   redirect: "follow"
 };
 
-fetch("http://localhost:3000/api/chat", requestOptions)
+fetch("api/chat", requestOptions)
   .then(async (response) =>{
     const ans = await response.text();  // Get the response text
     console.log(ans)
